@@ -12,8 +12,6 @@ router.post('/register', bodyParser() ,async(cnx)=>{
     cnx.body = 'Thanks for sharing the details'
 })
 
-
-
 // returns the registered user's for now
 router.get('/users', async (cnx) => {
     await connect()
