@@ -14,7 +14,7 @@ router.get('/', async(ctx)=>{
 // this is just for testing the user's actual ip and host details.
 
 
-router.get('/info', async(ctx)=>{
+router.get('/client_info', async(ctx)=>{
     const ip = ctx.ip;
     const host = ctx.host = ctx.host
     ctx.body = {ip, host}
