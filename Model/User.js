@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-
+const validator = require('validator')
 const Userschema = mongoose.Schema({
+
 	username: {
 		type: String,
 		required: true
@@ -31,8 +32,9 @@ const Userschema = mongoose.Schema({
 
 	email: {
 		type: String,
-		required: true
+		required: true,
 		// validate email.
+		validate: validator.isEmail
 	},
 
 	about: {
