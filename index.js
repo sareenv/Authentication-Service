@@ -4,7 +4,7 @@ const app = new Koa()
 const router = new Router()
 const register = require('./Routes/register')
 
-const port = process.env.port || 8080
+const port = process.env.PORT || 8080
 
 
 router.get('/', async(ctx)=>{
