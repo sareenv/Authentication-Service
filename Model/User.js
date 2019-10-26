@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
-const Userschema = mongoose.Schema({
 
+const Userschema = mongoose.Schema({
 	username: {
 		type: String,
 		required: true
@@ -47,8 +47,7 @@ const Userschema = mongoose.Schema({
 
 	birthDate: {
 		type: Date,
-		min: '1999-20-04',
-		max: Date.now()
+		
 	},
 
 	dateRegistered: {
@@ -57,13 +56,13 @@ const Userschema = mongoose.Schema({
 
 	Active: {
 		type: Boolean,
-		default: false
+		default: true
 	},
 
 	deleted: {
-		type: Boolean, 
+		type: Boolean,
+		default: false 
 	}
-
 })
 
 /* 
@@ -81,6 +80,7 @@ Userschema.pre('save', async function(){
 	this.dateRegistered = Date.now()
 })
 
-const User = mongoose.model('User', Userschema);
 
+
+const User = mongoose.model('User', Userschema);
 module.exports = User

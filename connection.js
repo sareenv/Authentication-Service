@@ -6,25 +6,22 @@
 
 const mongoose = require('mongoose');
 
+/** 
+ * These methods returns the promise which other files are using with await syntax.
+ * and should handle execptions using try catch block.
+ */
+
 const connect = async () => {
- 
     const config = {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }
-
     const dbUrl = 'mongodb://304cem:304cem123123@ds329668.mlab.com:29668/kv304cem'
- 
-    try{
-        await mongoose.connect(dbUrl, config)
-    }catch(error){
-        return new Error(`Error Connecting to the databse.`)
-    }
-
+    return mongoose.connect(dbUrl, config)
 }
 
 const disconnect = async () => { 
-    await mongoose.connection.close()
+    return mongoose.connection.close()
 }
 
 module.exports = { connect, disconnect }

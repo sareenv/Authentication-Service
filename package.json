@@ -10,12 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^3.0.0",
     "bcrypt": "^3.0.6",
     "eslint": "^6.5.1",
     "koa": "^2.8.2",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "mongoose": "^5.7.3",
+    "node-fetch": "^2.6.0",
     "validator": "^11.1.0"
   }
 }
