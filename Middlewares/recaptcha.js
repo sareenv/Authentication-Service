@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 /**
  * Check for the captcha details. It is a middleware for the register route
  * which ensures that the user has sucessfully solved google captcha and then trying to register
