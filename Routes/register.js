@@ -4,11 +4,11 @@ const bodyParser = require('koa-bodyparser')
 const {connect, disconnect} = require('../connection')
 const User = require('../Model/User')
 // middleware.
-const checkCaptcha = require('../Middlewares/recaptcha')
+// const checkCaptcha = require('../Middlewares/recaptcha')
 
 
 const router = new Router()
-router.post('/register', bodyParser(), checkCaptcha ,async(cnx)=>{
+router.post('/register', bodyParser() ,async(cnx)=>{
     try{
         await connect()
         /** Additional check to ensure the mandatory fields are present */
