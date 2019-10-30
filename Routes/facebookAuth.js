@@ -15,61 +15,64 @@ const facebookConfig = {
 }
 
 passport.use(new FacebookStrategy(facebookConfig, (accessToken, refreshToken, profile, done)=>{
-	done(null, profile)
+    
+    /**
+     * Handle the auth part here and if the user is not saved in db save it here.
+     */
+ 
+    const {photos} = profile 
+    const {name} = profile 
+    const {emails} = profile 
+
+    const profileImageUrl = photos[0].value
+    const firstName = name.givenName
+    const lastName  = name.familyName
+    const email = emails[0].value 
+
+
+    User.findOne({email: email}).then((data)=>{
+        if(data === null){
+            const randomPassword = generator.generate({length: 10, numbers: true});
+            const newUser = new User({
+                username: firstName,
+                email: email, 
+                profileImageUrl: profileImageUrl, 
+                password: randomPassword, 
+                firstName: firstName,
+                lastName: lastName
+            })
+            console.log(`The new user is ${newUser}`)
+            newUser.save().then((data) => {
+                done(null, profile)
+            }).catch(error => {
+                console.log('Error saving the details to our system')
+                done(error)
+            })
+        }
+        done(null, profile)
+    }).catch(error => {
+        console.log('Error authenticating the credentials with our system.')
+        done(error)
+    })
 }))	
 
-router.get('/success', cnx => {
-    cnx.body = 'The login was sucess'
+
+router.get('/success', async(cnx)=>{
+    cnx.body = 'Thanks, you are now on main page'
 })
 
-router.get('/failure', cnx => {
-    cnx.body = 'The login was failure'
+router.get('/failure', async(cnx)=>{
+    console.log('failure')
+    cnx.body = 'Sorry this auth was a failure'
 })
 
 router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email'], session: false}))
 
-router.get('/auth/facebook/callback', passport.authenticate('facebook',  (error, user) =>{
-    if(error){
-        return console.log(error)
-    }
-    /**
-     * Save the information to the database and generate a auth token.
-     */
-    // console.log(user)
-    const {name} = user // this contains firstName and lastName of the use.
-    const {emails} = user // this contains multiple email addresses.
-    const {photos} = user // this contains the profile image url
-    /**
-     * Value that we require from facebook to be used.
-     */
-    const profileImageUrl = photos[0].value
-    const firstName = name.givenName
-    const lastName  = name.familyName
-    const email = emails[0].value // this email should not exist in our system before.
-
-    
-    const randomPassword = generator.generate({
-        length: 10,
-        numbers: true
-    });
-    /** Now try saving the user in our system and send the user his radomly generate password
-     * so, user can change it if they requires which will support basic auth also
-    */
-    const newUser = new User({
-        username: 'firstName',
-        email: email, 
-        profileImageUrl: profileImageUrl, 
-        password: randomPassword, 
-        firstName: firstName,
-        lastName: lastName
-    })
-
-    newUser.save().then((data)=>{
-        return console.log(data)
-    })
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: '/success',
+    failureRedirect: '/failure', 
+    session: false
 }))
-
-
 
 module.exports = router 
 
