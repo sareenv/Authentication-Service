@@ -1,8 +1,11 @@
 const Koa = require('koa')
 const Router = require('koa-router')
 
+
 const loginRouter = require('./login')
 const deleteRouter = require('./delete')
+const updateRouter = require('./update')
+//const addRouter = require('./addUser')
 
 const app = new Koa() // this is ur server api
 const router = new Router()
@@ -14,7 +17,10 @@ router.get('/', async(ctx)=>{
 })
 
 app.use(router.routes())
+
 app.use(loginRouter.routes())
 app.use(deleteRouter.routes())
+app.use(updateRouter.routes())
+//app.use(addRouter.routes())
 
 app.listen(port, () => console.log(`The server is listening on port ${port}`))

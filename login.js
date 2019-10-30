@@ -23,8 +23,6 @@ router.post('/login', bodyParser() ,async(cnx)=>{
         return cnx.body = "Password has been validated!"
     } else
         return cnx.body = "Password has not been verified!"
-       
-  
 })
 
 // returns the registered user's for now
