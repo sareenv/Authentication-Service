@@ -10,10 +10,6 @@ const Userschema = mongoose.Schema({
     
 	password: {
 		type: String,
-<<<<<<< HEAD
-		required: true
-=======
->>>>>>> feature/facebookAuth
 	},
 	
 	// Salt value before saving to the database.
@@ -74,10 +70,6 @@ const Userschema = mongoose.Schema({
 	Ref: https://mongoosejs.com/docs/middleware.html#pre
 */
 
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/facebookAuth
 Userschema.pre('save', async function(){
 	// hash the password using bcrypt before saving to the database.
 	const unencryptedPassword = this.password
@@ -86,9 +78,6 @@ Userschema.pre('save', async function(){
 	this.dateRegistered = Date.now()
 })
 
-<<<<<<< HEAD
-
-=======
 Userschema.statics.isEmailExist = async function(email){
 	const existingEmail = await this.find({email})
 	if(existingEmail === null){
@@ -96,7 +85,6 @@ Userschema.statics.isEmailExist = async function(email){
 	}
 	return true
 }
->>>>>>> feature/facebookAuth
 
 const User = mongoose.model('User', Userschema);
 module.exports = User
