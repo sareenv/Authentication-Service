@@ -1,17 +1,20 @@
+'use strict'
+
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
+const {connect, disconnect} = require('../connection')
 
 const Userschema = mongoose.Schema({
 	username: {
 		type: String,
 		required: true
-    }, 
-    
+	},
+
 	password: {
 		type: String,
 	},
-	
+
 	// Salt value before saving to the database.
 	passwordSalt: {
 		type: String
@@ -19,7 +22,7 @@ const Userschema = mongoose.Schema({
 
 	firstName: {
 		type: String,
-	}, 
+	},
 
 	lastName: {
 		type: String
@@ -32,21 +35,20 @@ const Userschema = mongoose.Schema({
 	email: {
 		type: String,
 		required: true,
-		// validate email.
 		validate: validator.isEmail
 	},
 
 	about: {
 		type: String
-	}, 
+	},
 
 	countryId: {
 		type: String
-	}, 
+	},
 
 	birthDate: {
 		type: Date,
-		
+
 	},
 
 	dateRegistered: {
@@ -60,24 +62,30 @@ const Userschema = mongoose.Schema({
 
 	deleted: {
 		type: Boolean,
-		default: false 
+		default: false
 	}
 })
 
-/* 
-	Middleware: Before saving the data. 
-	Hash the data before saving to the database. 
+/*
+	Middleware: Before saving the data.
+	Hash the data before saving to the database.
 	Ref: https://mongoosejs.com/docs/middleware.html#pre
 */
 
+<<<<<<< HEAD
 Userschema.pre('save', async function(){
 	// hash the password using bcrypt before saving to the database.
+=======
+Userschema.pre('save', async function() {
+>>>>>>> feature/registration
 	const unencryptedPassword = this.password
-	const encryptedPassword = await bcrypt.hash(unencryptedPassword, 10)
+	const saltRound = 10
+	const encryptedPassword = await bcrypt.hash(unencryptedPassword, saltRound)
 	this.password = encryptedPassword
 	this.dateRegistered = Date.now()
 })
 
+<<<<<<< HEAD
 Userschema.statics.isEmailExist = async function(email){
 	const existingEmail = await this.find({email})
 	if(existingEmail === null){
@@ -85,6 +93,19 @@ Userschema.statics.isEmailExist = async function(email){
 	}
 	return true
 }
+=======
+Userschema.statics.register = async function(details) {
+	const {email, password, username, firstName} = details
+	if(email === undefined || username === undefined || password === undefined || firstName === undefined) {
+		throw new Error('User registeration was unsuccessfull without mandatory fields')
+	}
+	await connect()
+	const newUser = new this({email, password, username, firstName})
+	await newUser.save()
+	await disconnect()
+}
 
-const User = mongoose.model('User', Userschema);
+>>>>>>> feature/registration
+
+const User = mongoose.model('User', Userschema)
 module.exports = User
