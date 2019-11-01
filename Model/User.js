@@ -72,12 +72,8 @@ const Userschema = mongoose.Schema({
 	Ref: https://mongoosejs.com/docs/middleware.html#pre
 */
 
-<<<<<<< HEAD
 Userschema.pre('save', async function(){
 	// hash the password using bcrypt before saving to the database.
-=======
-Userschema.pre('save', async function() {
->>>>>>> feature/registration
 	const unencryptedPassword = this.password
 	const saltRound = 10
 	const encryptedPassword = await bcrypt.hash(unencryptedPassword, saltRound)
@@ -85,15 +81,6 @@ Userschema.pre('save', async function() {
 	this.dateRegistered = Date.now()
 })
 
-<<<<<<< HEAD
-Userschema.statics.isEmailExist = async function(email){
-	const existingEmail = await this.find({email})
-	if(existingEmail === null){
-		return false
-	}
-	return true
-}
-=======
 Userschema.statics.register = async function(details) {
 	const {email, password, username, firstName} = details
 	if(email === undefined || username === undefined || password === undefined || firstName === undefined) {
@@ -105,7 +92,6 @@ Userschema.statics.register = async function(details) {
 	await disconnect()
 }
 
->>>>>>> feature/registration
 
 const User = mongoose.model('User', Userschema)
 module.exports = User
