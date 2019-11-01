@@ -1,5 +1,6 @@
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
+<<<<<<< HEAD
 const fetch = require('node-fetch');
 const {connect, disconnect} = require('../connection')
 const User = require('../Model/User')
@@ -9,6 +10,17 @@ const checkCaptcha = require('../Middlewares/recaptcha')
 
 const router = new Router()
 router.post('/register', bodyParser(), checkCaptcha ,async(cnx)=>{
+=======
+
+const {connect, disconnect} = require('../connection')
+const User = require('../Model/User')
+// middleware.
+// const checkCaptcha = require('../Middlewares/recaptcha')
+
+
+const router = new Router()
+router.post('/register', bodyParser() ,async(cnx)=>{
+>>>>>>> feature/facebookAuth
     try{
         await connect()
         /** Additional check to ensure the mandatory fields are present */
