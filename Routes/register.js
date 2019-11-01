@@ -4,24 +4,16 @@ const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 const {connect, disconnect} = require('../connection')
 const User = require('../Model/User')
-// middleware.
-const checkCaptcha = require('../Middlewares/recaptcha')
 
+const checkCaptcha = require('../Middlewares/recaptcha')
 
 const router = new Router()
 router.post('/register', bodyParser(), checkCaptcha ,async(cnx) => {
 	try{
-		await connect()
-		const {username, password, email} = cnx.request.body
-		if(email === undefined || username === undefined || password === undefined) {
-			return cnx.throw(400, 'error insufficient details')
-		}
-		const newUser = new User(cnx.request.body)
-		await newUser.save()
-		await disconnect()
-		cnx.body = 'Thanks for sharing the details'
+		await User.register(cnx.request.body)
+		cnx.body = 'User has been registered in our system'
 	}catch(error) {
-		cnx.throw(400, `${error}`)
+		cnx.throw(400, error)
 	}
 })
 
