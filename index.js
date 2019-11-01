@@ -1,3 +1,5 @@
+'use strict'
+
 const Koa = require('koa')
 const Router = require('koa-router')
 const cors = require('@koa/cors')
@@ -10,7 +12,7 @@ const port = process.env.PORT || 5050
 
 
 router.get('/', async(ctx)=>{
-    ctx.body = 'Welcome to the koa-server'
+	ctx.body = 'Welcome to the koa-server'
 })
 
 

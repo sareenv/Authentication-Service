@@ -1,3 +1,5 @@
+'use strict'
+
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
@@ -6,13 +8,13 @@ const Userschema = mongoose.Schema({
 	username: {
 		type: String,
 		required: true
-    }, 
-    
+	},
+
 	password: {
 		type: String,
 		required: true
 	},
-	
+
 	// Salt value before saving to the database.
 	passwordSalt: {
 		type: String
@@ -20,7 +22,7 @@ const Userschema = mongoose.Schema({
 
 	firstName: {
 		type: String,
-	}, 
+	},
 
 	lastName: {
 		type: String
@@ -39,15 +41,15 @@ const Userschema = mongoose.Schema({
 
 	about: {
 		type: String
-	}, 
+	},
 
 	countryId: {
 		type: String
-	}, 
+	},
 
 	birthDate: {
 		type: Date,
-		
+
 	},
 
 	dateRegistered: {
@@ -61,26 +63,26 @@ const Userschema = mongoose.Schema({
 
 	deleted: {
 		type: Boolean,
-		default: false 
+		default: false
 	}
 })
 
-/* 
-	Middleware: Before saving the data. 
-	Hash the data before saving to the database. 
+/*
+	Middleware: Before saving the data.
+	Hash the data before saving to the database.
 	Ref: https://mongoosejs.com/docs/middleware.html#pre
 */
 
 
-Userschema.pre('save', async function(){
+Userschema.pre('save', async function() {
 	// hash the password using bcrypt before saving to the database.
 	const unencryptedPassword = this.password
-	const encryptedPassword = await bcrypt.hash(unencryptedPassword, 10)
+	const saltRound = 10
+	const encryptedPassword = await bcrypt.hash(unencryptedPassword, saltRound)
 	this.password = encryptedPassword
 	this.dateRegistered = Date.now()
 })
 
 
-
-const User = mongoose.model('User', Userschema);
+const User = mongoose.model('User', Userschema)
 module.exports = User

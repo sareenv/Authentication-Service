@@ -17,7 +17,8 @@
     "koa-router": "^7.4.0",
     "mongoose": "^5.7.3",
     "node-fetch": "^2.6.0",
-    "validator": "^11.1.0"
+    "validator": "^11.1.0",
+    "connection": "file:./connection"
   },
   "devDependencies": {
     "eslint": "^6.6.0"
