@@ -14,11 +14,7 @@ router.get('/', async(ctx)=>{
     ctx.body = 'Welcome to the koa-server'
 })
 
-
-
-
 app.use(passport.initialize())
-
 app.use(registerRoute.routes())
 app.use(facebookAuthRouter.routes())
 app.use(router.routes())

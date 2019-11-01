@@ -3,10 +3,11 @@ const passport = require('koa-passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const router = new Router();
 const User = require('../Model/User')
+const {connect, disconnect} = require('../connection')
 /**
  * https://www.npmjs.com/package/generate-password
  */
-const generator = require('generate-password');
+
 const facebookConfig = {
     clientID: '1178892432307006',
 	clientSecret: 'df0faa7791b2f07ac72f730d7afb9225', 
@@ -15,64 +16,42 @@ const facebookConfig = {
 }
 
 passport.use(new FacebookStrategy(facebookConfig, (accessToken, refreshToken, profile, done)=>{
-    
-    /**
-     * Handle the auth part here and if the user is not saved in db save it here.
-     */
- 
-    const {photos} = profile 
-    const {name} = profile 
-    const {emails} = profile 
+    done(null, profile)	
+}))
 
+router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email'], session: false}))
+router.get('/auth/facebook/callback', passport.authenticate('facebook', async (error, user) => {
+    
+    if(error){
+        return console.log(`Some error ${error}`)
+    }
+
+    // console.log(user.photos)
+    const {photos, name, emails} = user  
     const profileImageUrl = photos[0].value
+ 
     const firstName = name.givenName
     const lastName  = name.familyName
     const email = emails[0].value 
 
-
-    User.findOne({email: email}).then((data)=>{
-        if(data === null){
-            const randomPassword = generator.generate({length: 10, numbers: true});
-            const newUser = new User({
-                username: firstName,
-                email: email, 
-                profileImageUrl: profileImageUrl, 
-                password: randomPassword, 
-                firstName: firstName,
-                lastName: lastName
-            })
-            console.log(`The new user is ${newUser}`)
-            newUser.save().then((data) => {
-                done(null, profile)
-            }).catch(error => {
-                console.log('Error saving the details to our system')
-                done(error)
-            })
-        }
-        done(null, profile)
-    }).catch(error => {
-        console.log('Error authenticating the credentials with our system.')
-        done(error)
+    const newUser = new User({
+        username: firstName,
+        email: email, 
+        profileImageUrl: profileImageUrl, 
+        password: '123123', // generate the jwt insted here. and remove the field as mandatory
+        firstName: firstName,
+        lastName: lastName
     })
-}))	
-
-
-router.get('/success', async(cnx)=>{
-    cnx.body = 'Thanks, you are now on main page'
-})
-
-router.get('/failure', async(cnx)=>{
-    console.log('failure')
-    cnx.body = 'Sorry this auth was a failure'
-})
-
-router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email'], session: false}))
-
-router.get('/auth/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: '/success',
-    failureRedirect: '/failure', 
-    session: false
+    await connect()
+    const result = await newUser.save()
+    console.log(`The saved result is ${result}`)
+    await disconnect()
+    
 }))
+
+router.get('/pro', async cnx =>{
+    cnx.body = 'Sucessfully saved the details to our server'
+})
 
 module.exports = router 
 

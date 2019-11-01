@@ -10,7 +10,6 @@ const Userschema = mongoose.Schema({
     
 	password: {
 		type: String,
-		required: true
 	},
 	
 	// Salt value before saving to the database.
