@@ -1,0 +1,21 @@
+{
+  "name": "304CEM-KV-Backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "koa-bodyparser": "^4.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.coventry.ac.uk/sareenv/304CEM-KV-Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
