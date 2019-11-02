@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const {connect, disconnect} = require('../connection')
 const User = require('../Model/User')
 const router = new Router()
+ 
 
 router.post('/login', bodyParser() ,async(cnx)=>{
     let password = cnx.request.body.password
