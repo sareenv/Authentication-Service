@@ -72,7 +72,7 @@ const Userschema = mongoose.Schema({
 	Ref: https://mongoosejs.com/docs/middleware.html#pre
 */
 
-Userschema.pre('save', async function(){
+Userschema.pre('save', async function() {
 	// hash the password using bcrypt before saving to the database.
 	const unencryptedPassword = this.password
 	const saltRound = 10
