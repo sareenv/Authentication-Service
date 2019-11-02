@@ -9,6 +9,7 @@ const checkCaptcha = require('../Middlewares/recaptcha')
 
 
 const router = new Router()
+
 router.post('/register', bodyParser(), checkCaptcha ,async(cnx) => {
 	try{
 		await User.register(cnx.request.body)
