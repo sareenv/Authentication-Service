@@ -1,5 +1,10 @@
 const Koa = require('koa')
 const Router = require('koa-router')
+const cors = require('@koa/cors')
+const passport = require('koa-passport')
+
+const register = require('./Routes/register')
+const facebookAuthRouter = require('./Routes/facebookAuth')
 
 
 const loginRouter = require('./login')
@@ -9,13 +14,22 @@ const updateRouter = require('./update')
 
 const app = new Koa() // this is ur server api
 const router = new Router()
-const port = process.env.port || 8080
+
+
+const port = process.env.PORT || 5050
+
 
 
 router.get('/', async(ctx)=>{
     ctx.body = 'Welcome to the koa-server'
 })
 
+
+app.use(cors())
+app.use(register.routes())
+app.use(passport.initialize())
+
+app.use(facebookAuthRouter.routes())
 app.use(router.routes())
 
 app.use(loginRouter.routes())

@@ -14,7 +14,7 @@ router.del('/delUser/:email', async(cnx)=> {
     const delFind = await User.findOne({email})
     if (delFind !== null){
         console.log('User has been found')
-        await delFind.remove()
+        await delFind.update({deleted: true})
     }else{
         cnx.throw(400, 'Unfortunatley the user cannot be found in the system')
 
