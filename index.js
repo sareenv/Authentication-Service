@@ -8,19 +8,17 @@ const passport = require('koa-passport')
 const register = require('./Routes/register')
 const facebookAuthRouter = require('./Routes/facebookAuth')
 
-const app = new Koa()
+const loginRouter = require('./login')
+const deleteRouter = require('./delete')
+
+const app = new Koa() // this is ur server api
 const router = new Router()
 
 const port = process.env.PORT || 5050
 
 router.get('/', async(ctx)=>{
-<<<<<<< HEAD
     ctx.body = 'Welcome to the koa-server'
-=======
-	ctx.body = 'Welcome to the koa-server'
->>>>>>> feature/registration
 })
-
 
 app.use(cors())
 app.use(passport.initialize())
@@ -28,4 +26,7 @@ app.use(passport.initialize())
 app.use(facebookAuthRouter.routes())
 app.use(register.routes())
 app.use(router.routes())
+app.use(loginRouter.routes())
+app.use(deleteRouter.routes())
+
 app.listen(port, () => console.log(`The server is listening on port ${port}`))
