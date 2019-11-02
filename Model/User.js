@@ -86,12 +86,18 @@ Userschema.statics.register = async function(details) {
 	if(email === undefined || username === undefined || password === undefined || firstName === undefined) {
 		throw new Error('User registeration was unsuccessfull without mandatory fields')
 	}
-	await connect()
-	const newUser = new this({email, password, username, firstName})
-	await newUser.save()
-	await disconnect()
+	try{
+		await connect()
+		const existingUser = await User.findOne({email})
+		if(existingUser !== null) throw new Error('User with this email already exist in our system')
+		const newUser = new this({email, password, username, firstName})
+		await newUser.save()
+		await disconnect()
+		return {status: true, message: 'Registered user into our system successfully.'}
+	}catch(error){
+		return {status: false, message: 'Error saving the user', error: error}
+	}
 }
-
 
 const User = mongoose.model('User', Userschema)
 module.exports = User
