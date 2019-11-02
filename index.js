@@ -29,7 +29,6 @@ app.use(passport.initialize())
 app.use(facebookAuthRouter.routes())
 app.use(register.routes())
 app.use(router.routes())
-
 app.use(loginRouter.routes())
 app.use(deleteRouter.routes())
 app.use(updateRouter.routes())
