@@ -2,9 +2,9 @@
 ///information retrieval through API request 
 
 const Router = require('koa-router');
-const User = require('./Model/User');
-const connect = require('./connection').connect
-const disconnect = require('./connection').disconnect
+const User = require('../Model/User');
+const connect = require('../connection').connect
+const disconnect = require('../connection').disconnect
 
 const router = new Router();
 

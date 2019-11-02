@@ -1,8 +1,8 @@
 const Router = require('koa-router');
-const User = require('./Model/User');
+const User = require('../Model/User');
 const bcrypt = require('bcrypt');
-const connect = require('./connection').connect
-const disconnect = require('./connection').disconnect
+const connect = require('../connection').connect
+const disconnect = require('../connection').disconnect
 
 
 const router = new Router();
