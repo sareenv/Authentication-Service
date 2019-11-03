@@ -15,7 +15,6 @@ router.del('/delUser/:email', async(cnx)=> {
         await delFind.update({deleted: true})
     }else{
         cnx.throw(400, 'Unfortunatley the user cannot be found in the system')
-
     }     
     await disconnect()
 })

@@ -7,14 +7,14 @@ const passport = require('koa-passport')
 
 const register = require('./Routes/register')
 const facebookAuthRouter = require('./Routes/facebookAuth')
-const LoginHistory = require('./Model/LoginHistory')
+
 
 const loginRouter = require('./Routes/login')
 const deleteRouter = require('./Routes/delete')
 const updateRouter = require('./Routes/update')
-//const addRouter = require('./addUser')
 
-const app = new Koa() // this is ur server api
+
+const app = new Koa() 
 const router = new Router()
 
 const port = process.env.PORT || 5050

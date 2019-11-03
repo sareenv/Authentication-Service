@@ -1,9 +1,3 @@
-/*
-    Connection to Mongodb that we have hosted online on MLabs.
-    Author: Vinayak Sareen.
-    Libraries Used: Mongoose.
-*/
-
 'use strict'
 
 const mongoose = require('mongoose')
