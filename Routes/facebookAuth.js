@@ -3,10 +3,10 @@ const passport = require('koa-passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const router = new Router();
 const User = require('../Model/User')
+const bodyParser = require('koa-bodyparser')
 const {connect, disconnect} = require('../connection')
-/**
- * https://www.npmjs.com/package/generate-password
- */
+
+const verifyToken = require('../Middlewares/verifyjwt')
 
 const facebookConfig = {
     clientID: '1178892432307006',
@@ -19,13 +19,11 @@ passport.use(new FacebookStrategy(facebookConfig, (accessToken, refreshToken, pr
     done(null, profile)	
 }))
 
+
 router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email'], session: false}))
 router.get('/auth/facebook/callback', passport.authenticate('facebook', async (error, user) => {
-    
-    if(error){
-        return console.log(`Some error ${error}`)
-    }
 
+    if(error) return console.log(`Some error ${error}`) 
     const {photos, name, emails} = user  
     const profileImageUrl = photos[0].value
     const firstName = name.givenName

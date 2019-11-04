@@ -85,6 +85,30 @@ Userschema.pre('save', async function() {
 	this.dateRegistered = Date.now()
 })
 
+
+/**
+ *  Find the user by it's email.
+ *  @params {Int} user email
+ * 	@throws {Error} - If the user is not present in the system with email
+ *  @returns {Object} - returns the object with the user details
+ */
+
+Userschema.statics.findByEmail = async function(email){
+	if(email === undefined) throw new Error('Email cannot be undefined')
+	try{
+		await connect()
+		const result = await User.findOne({email})
+		if(result == null) throw new Error('Cannot find user with this details in our system') 
+		await disconnect()
+		return result
+	}catch(error){
+		throw new Error(`Error performing this operation`)
+	} 
+}
+
+
+
+
 /**
  * Process the user registration with validation of data.
  * @params {User} user details - This includes all the user's registration data 
@@ -117,18 +141,14 @@ Userschema.statics.register = async function(details) {
  * @returns {String} - Returns the json web token when the user login success or user register successfully.
  */
 
- Userschema.methods.generateJwt = function(email, tokenExpirationTime){
-	if(email === undefined) throw new Error('Error generating the token');
+ Userschema.methods.generateJwt = async function(){
 	try{
-		await connect()
-		const currentUser = await User.findOne({email})
-		if(currentUser === null) throw new Error('Error generating the token, User doesnot exist in out system')
-		const webTokenPayload = currentUser._id
-		const tokenSecret = 'covlifepass2121'
-		const jwtToken = jwt.sign({webTokenPayload}, tokenSecret)
+		const webTokenPayload = this._id
+		const tokenSecret = 'bf91c77e9c8901104094c9bc56435cb1f0a451416e7ca8891a5225b3a962db55be1daf9a8fe0956b1e559c373708d72daf53d5a82f396caf55c833d871e4a67c';
+		const jwtToken = await jwt.sign({webTokenPayload}, tokenSecret)
 		return {token: jwtToken}
-	} catch(error){
-		throw new Error('Error validating the user details.')
+	}catch(error){
+		throw new Error('Error, generating the token')
 	}
  }
 

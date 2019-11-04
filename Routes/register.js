@@ -2,11 +2,8 @@
 
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
-
-
 const User = require('../Model/User')
 const checkCaptcha = require('../Middlewares/recaptcha')
-
 
 const router = new Router()
 
@@ -19,5 +16,6 @@ router.post('/register', bodyParser(), checkCaptcha ,async(cnx) => {
 		cnx.throw(400, error.message)
 	}
 })
+
 
 module.exports = router
