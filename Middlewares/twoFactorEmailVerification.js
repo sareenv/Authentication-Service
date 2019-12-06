@@ -8,6 +8,7 @@ const nodemailer = require('node-mailer')
  * @redirects - Redirects the client to email verification.
  */
 
+ // this needs to be done.
 async function checkTwoFactorMiddleWare(ctx, next) {
     if(ctx.request.body.twoFactorAuth === false) {
         return next()
