@@ -16,7 +16,6 @@ const Userschema = mongoose.Schema({
 		type: String,
 	},
 
-	// Salt value before saving to the database.
 	passwordSalt: {
 		type: String
 	},
@@ -41,6 +40,11 @@ const Userschema = mongoose.Schema({
 
 	about: {
 		type: String
+	},
+
+	twoFactorAuth: {
+		type: Boolean,
+		default: false
 	},
 
 	countryId: {
