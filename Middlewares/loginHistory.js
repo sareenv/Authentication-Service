@@ -1,9 +1,7 @@
-/* eslint-disable max-lines-per-function */
-/* eslint-disable no-unused-vars */
+
 'use strict'
 
 const LoginHistory = require('../Model/LoginHistory')
-
 const {connect, disconnect} = require('../connection')
 
 const loginHistory = async function(cnx, next) {

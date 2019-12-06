@@ -21,7 +21,8 @@ router.put('/updateUser/:email/:password', async(cnx)=>{
         await disconnect()
         cnx.body = 'User information has been updated'
     }else{
-        cnx.throw(400, 'Unfortunatley the user is unable to update password as it cannot be found in the system')
+        const error = 'Unfortunatley the user is unable to update password as it cannot be found in the system'
+        cnx.throw(400, error)
     }     
     
 })

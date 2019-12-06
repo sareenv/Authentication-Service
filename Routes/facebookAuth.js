@@ -41,7 +41,6 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', async (e
     
     await connect()
     const result = await newUser.save()
-    console.log(`The saved result is ${result}`)
     return await disconnect()
 }))
 
