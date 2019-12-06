@@ -8,7 +8,6 @@ const disconnect = require('../connection').disconnect
 const router = new Router();
 
 router.put('/updateUser/:email/:password', async(cnx)=>{
-    console.log('pass is coming')
     let password = cnx.params.password
     const email = cnx.params.email
     await connect()
