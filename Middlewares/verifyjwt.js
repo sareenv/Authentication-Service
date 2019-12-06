@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
  * @returns {String} - token
  */
 
- const verifyToken = async function(cnx, next){
+const verifyToken = async function(cnx, next){
     const authorizationheader = cnx.headers['authorization']
     if (authorizationheader === undefined) cnx.throw(401, 'Authorisation Header missing') 
     const token = authorizationheader.replace('Bearer ', '')
@@ -18,6 +18,6 @@ const jwt = require('jsonwebtoken');
       console.log(error)
       cnx.throw(401, 'The token verification is unsucessfull')
     }
- }
+}
 
- module.exports = verifyToken
+module.exports = verifyToken

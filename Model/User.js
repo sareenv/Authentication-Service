@@ -141,7 +141,7 @@ Userschema.statics.register = async function(details) {
  * @returns {String} - Returns the json web token when the user login success or user register successfully.
  */
 
- Userschema.methods.generateJwt = async function(){
+Userschema.methods.generateJwt = async function(){
 	try{
 		const webTokenPayload = this._id
 		const tokenSecret = 'bf91c77e9c8901104094c9bc56435cb1f0a451416e7ca8891a5225b3a962db55be1daf9a8fe0956b1e559c373708d72daf53d5a82f396caf55c833d871e4a67c';
@@ -150,7 +150,7 @@ Userschema.statics.register = async function(details) {
 	}catch(error){
 		throw new Error('Error, generating the token')
 	}
- }
+}
 
 const User = mongoose.model('User', Userschema)
 module.exports = User
