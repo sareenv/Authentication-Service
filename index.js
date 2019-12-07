@@ -7,6 +7,7 @@ const passport = require('koa-passport')
 
 const register = require('./Routes/register')
 const facebookAuthRouter = require('./Routes/facebookAuth')
+const tokensRouters = require('./Routes/tokens')
 
 
 const loginRouter = require('./Routes/login')
@@ -32,5 +33,6 @@ app.use(router.routes())
 app.use(loginRouter.routes())
 app.use(deleteRouter.routes())
 app.use(updateRouter.routes())
+app.use(tokensRouters.routes())
 
 app.listen(port, () => console.log(`The server is listening on port ${port}`))

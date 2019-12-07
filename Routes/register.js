@@ -17,18 +17,6 @@ router.post('/register', bodyParser(), checkCaptcha ,async(cnx) => {
 	}
 })
 
-router.post('/generateToken', bodyParser(), async(cnx) => {
-	try{
-		const {email} = cnx.request.body
-		if(email === undefined) throw new Error('missing email')
-		const user = await User.findByEmail(email) 
-		if(user === undefined) throw new Error('system cannot find any user with this email')
-		const token = await user.generateJwt()
-		cnx.body = 'Token is generated and saved into our systems'
-	} catch(error) {
-		cnx.throw(404, error.message)
-	}	
-})
 
 
 module.exports = router
