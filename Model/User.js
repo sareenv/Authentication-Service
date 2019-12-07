@@ -92,7 +92,7 @@ Userschema.pre('save', async function() {
 
 /**
  *  Find the user by it's email.
- *  @params {Int} user email
+ *  @params {String} - user email
  * 	@throws {Error} - If the user is not present in the system with email
  *  @returns {Object} - returns the object with the user details
  */
@@ -110,6 +110,26 @@ Userschema.statics.findByEmail = async function(email){
 	} 
 }
 
+
+/**
+ *  checks the user token in stored tokens.
+ *  @params {Int} user email
+ * 	@throws {Error} - If the user is not present in the system with email
+ *  @returns {Boolean} - returns true if the token is found in the system
+ */
+
+Userschema.statics.checkTokenExists = async function(token, _id){
+	if(token === undefined || userId === undefined) throw new Error('Details cannot be undefined')
+	try{
+		await connect()
+		const result = await User.findOne({_id})
+		if(result == null) throw new Error('Cannot find user with this details in our system') 
+		await disconnect()
+		return result
+	}catch(error){
+		throw new Error(`Error performing this operation`)
+	} 
+}
 
 
 
@@ -145,16 +165,34 @@ Userschema.statics.register = async function(details) {
  * @returns {String} - Returns the json web token when the user login success or user register successfully.
  */
 
- Userschema.methods.generateJwt = async function(){
+Userschema.methods.generateJwt = async function() {
 	try{
-		const webTokenPayload = this._id
+		const date = Date.now()
+		const webTokenPayload = {id: this._id, date}
 		const tokenSecret = 'bf91c77e9c8901104094c9bc56435cb1f0a451416e7ca8891a5225b3a962db55be1daf9a8fe0956b1e559c373708d72daf53d5a82f396caf55c833d871e4a67c';
 		const jwtToken = await jwt.sign({webTokenPayload}, tokenSecret)
+		this.tokens.push(jwtToken)
+		const result = await User.updateOne({_id: this._id}, {tokens: this.tokens})
 		return {token: jwtToken}
 	}catch(error){
+		console.log(error.message)
 		throw new Error('Error, generating the token')
 	}
- }
+}
+
+/**
+ * Sends the email verification code to the user with time validation for two fact authentication.
+ * @throws {Error} - User details are not present in the system or empty fields are sent.
+ * @returns {String} - sends the json web token when the user is found in our system with two factor auth settings.
+ */
+
+Userschema.methods.twoFactorAuthentication = async function() {
+	if(this.twoFactorAuth !== false) {
+		// generate the radom number 
+	}
+	return
+}
+
 
 const User = mongoose.model('User', Userschema)
 module.exports = User

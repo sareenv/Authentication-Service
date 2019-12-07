@@ -13,9 +13,9 @@ const verifyToken = async function(cnx, next){
     try{
       const tokenVerification = await jwt.verify(token, secret)
       if(tokenVerification !== undefined || tokenVerification !== null) cnx.state.user = tokenVerification.webTokenPayload
+      // here we get the id.
       return next()
     }catch(error){
-      console.log(error)
       cnx.throw(401, 'The token verification is unsucessfull')
     }
 }
