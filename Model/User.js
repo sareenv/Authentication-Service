@@ -3,8 +3,15 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
+const mailUtility = require('../utils/mailer')
+
 const {connect, disconnect} = require('../connection')
+
+/**
+ * User schema below is a structure for the mongoDatabase. 
+ * This schema is used to create the models on which operations are performed.
+ */
 
 const Userschema = mongoose.Schema({
 	username: {
@@ -68,7 +75,7 @@ const Userschema = mongoose.Schema({
 	deleted: {
 		type: Boolean,
 		default: false
-	}, 
+	},
 
 	tokens: {
 		type: [String]
@@ -187,11 +194,32 @@ Userschema.methods.generateJwt = async function() {
  * @returns {String} - sends the json web token when the user is found in our system with two factor auth settings.
  */
 
-Userschema.methods.twoFactorAuthentication = async function() {
-	if(this.twoFactorAuth !== false) {
-		// generate the radom number 
+Userschema.methods.twoFactorpasswordVerificationEmail = async function() {
+	if(this.twoFactorAuth === true) {
+		const randomNumber = Math.floor(Math.random() * 900000)
+		/* 
+			save this radom number in form of token which expires in 
+			some times - may be in 3 mins or so and store it in the array.
+			- after 3 mins the code will be earsed from the system. 
+				- why becuase I need to store this information
+				- even if it's there no problem - there is - it consumes memory.
+
+			- middleware which checks removes it if it is not valid. - good idea.
+		*/
+		const message = `${randomNumber} is two factor verification password this 
+			radom code will be expired from system for security reasons.
+		`
+		const twoFactortokenSecret = 'bf91c77e9c8901104094c9bc56435cb1f0a451416e7ca8891a5225b3a962db55be1daf9a8fe0956b1e559c373708d72daf53d5a82f396caf55c833d871e4a67c';
+		const twoFactortoken = await jwt.sign({message}, twoFactortokenSecret)
+		this.twoFactorToken = twoFactortoken
+		try {
+			const result = await mailUtility(this.email, message)
+			return true
+		}catch(error){
+			throw new Error(error.message)
+		}
 	}
-	return
+	return false
 }
 
 
