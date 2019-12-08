@@ -45,5 +45,11 @@ const credentials = {
     cert: fs.readFileSync('./cert.pem'),
     passphrase: 'covsecret'
 }
-
+/*
+  Below command will read the ssl self-signed certificate which was generated using 
+  openssl for free to make secured api. However, actual certicates are paid cannot be 
+  deployed on Heroku for free so, app.listen needs to be enabled insted of https.createServer.  
+*/
 https.createServer(credentials, app.callback()).listen(port)
+
+// app.listen(port)
