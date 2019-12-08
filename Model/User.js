@@ -6,13 +6,8 @@ const validator = require('validator')
 const jwt = require('jsonwebtoken')
 const Speakeasy = require('speakeasy')
 const mailUtility = require('../utils/mailer')
-
 const {connect, disconnect} = require('../connection')
 
-/**
- * User schema below is a structure for the mongoDatabase. 
- * This schema is used to create the models on which operations are performed.
- */
 
 const Userschema = mongoose.Schema({
 	username: {
@@ -242,14 +237,13 @@ Userschema.statics.logoutAllAccounts = async function(userId) {
 
 
 Userschema.methods.verifyTwoAuthentication = async function(token) {
-	
 	const twoFactorVerificationSecret = this.usertwoFactorSecretToken
 	const verification = Speakeasy.totp.verify({
 		secret: twoFactorVerificationSecret,
 		encoding: 'base32',
-		token: token
+		token: token,
+		window: 2
 	})
-	console.log(`The verification result is ${verification}`)
 	return verification
 }
 

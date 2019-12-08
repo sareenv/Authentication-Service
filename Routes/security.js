@@ -19,8 +19,7 @@ router.post('/verifyTwoFactorAuth', bodyParser(), async cnx => {
     const {email, token} =  cnx.request.body
     const user = await User.findByEmail(email)
 	const result = await user.verifyTwoAuthentication(token)
-	console.log('The result is ' + result)
-	cnx.body = {message: 'Client is now verified'}
+	cnx.body = {result}
 })
 
 router.post('/signoutAllDevices', bodyParser(), verifyToken, async ctx => {
