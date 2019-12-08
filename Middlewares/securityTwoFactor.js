@@ -7,7 +7,7 @@ const {connect, disconnect} = require('../connection')
  * @returns {String} - token
  */
 
-const twoFactorAuth = async function(cnx, next){
+const twoFactorAuth = async function(cnx, next) {
     const authorizationheader = cnx.headers['authorization']
     if (authorizationheader === undefined) cnx.throw(401, 'Authorisation Header missing') 
     const token = authorizationheader.replace('Bearer ', '')
@@ -18,15 +18,23 @@ const twoFactorAuth = async function(cnx, next){
         const userId = tokenVerification.webTokenPayload.id
         await connect()
         const user = await User.findById(userId)
+        const userTokens = user.tokens
+        const tokenAvailable = (userTokens.indexOf(token) > -1) ? true : false
+        if(tokenAvailable !== true) cnx.throw(401, 'The token verification is unsucessfull')
         await disconnect()
         if(user.twoFactorAuth === true) {
             await user.twoFactorpasswordVerificationEmail()
             return next()
         }
-        cnx.throw(401, 'Wrong Token')
+        cnx.throw(401, 'Wrong Token!')
     }catch(error){
         cnx.throw(401, 'The token verification is unsucessfull')
     }
+}
+
+
+const verifyTwoFactorToken = async function(cnx, next) {
+
 }
 
 module.exports = twoFactorAuth

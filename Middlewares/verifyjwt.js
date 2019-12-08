@@ -19,6 +19,12 @@ const verifyToken = async function(cnx, next){
       await connect()
       const user = await User.findById(userId)
       await disconnect()
+      const userTokens = user.tokens
+      const tokenAvailable = (userTokens.indexOf(token) > -1) ? true : false
+      if(tokenAvailable !== true) {
+        cnx.throw(401, 'The token verification is unsucessfull')
+      }
+      cnx.request.userId = user._id
       return next()
     }catch(error){
       cnx.throw(401, 'The token verification is unsucessfull')

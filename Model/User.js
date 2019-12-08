@@ -221,13 +221,31 @@ Userschema.methods.twoFactorpasswordVerificationEmail = async function() {
 
 
 /**
+ * Logout the client from multiple devices.
+ * @throws {Error} - User details are not present in the system or empty fields are sent.
+ * @returns {String} - sends the json web token when the user is found in our system with two factor auth settings.
+ */
+
+
+Userschema.methods.logoutAllAccounts = async function() {
+	try{
+		await this.updateOne({$set: {tokens: []}})
+		return true
+	}catch(error) {
+		throw new Error(error.message)
+	}
+}
+
+
+
+/**
  * Verify the token sent to client for two factor authentication.
  * @throws {Error} - User details are not present in the system or empty fields are sent.
  * @returns {String} - sends the json web token when the user is found in our system with two factor auth settings.
  */
 
 
-Userschema.methods.verifyTwoAuthentication = async function(token, secret) {
+Userschema.methods.verifyTwoAuthentication = async function(token) {
 	const twoFactorVerificationSecret = this.usertwoFactorSecretToken
 	const verification = Speakeasy.totp.verify({
 		secret: twoFactorVerificationSecret,
