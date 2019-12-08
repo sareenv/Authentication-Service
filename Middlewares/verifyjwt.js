@@ -1,4 +1,6 @@
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
+const User = require('../Model/User')
+const {connect, disconnect} = require('../connection')
 /**
  * This middleware will verify the tokens, sent by the users.
  * @params {context, next} - This takes the contenxt object and next to call the next middleware.
@@ -13,9 +15,18 @@ const verifyToken = async function(cnx, next){
     try{
       const tokenVerification = await jwt.verify(token, secret)
       if(tokenVerification !== undefined || tokenVerification !== null) cnx.state.user = tokenVerification.webTokenPayload
+      const userId = tokenVerification.webTokenPayload.id
+      await connect()
+      const user = await User.findById(userId)
+      await disconnect()
+      const userTokens = user.tokens
+      const tokenAvailable = (userTokens.indexOf(token) > -1) ? true : false
+      if(tokenAvailable !== true) {
+        cnx.throw(401, 'This token is expired now.')
+      }
+      cnx.request.userId = user._id
       return next()
     }catch(error){
-      console.log(error)
       cnx.throw(401, 'The token verification is unsucessfull')
     }
 }
