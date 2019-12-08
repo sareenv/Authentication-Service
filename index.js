@@ -4,6 +4,8 @@ const Koa = require('koa')
 const Router = require('koa-router')
 const cors = require('@koa/cors')
 const passport = require('koa-passport')
+const https = require('https')
+const fs = require('fs')
 
 const register = require('./Routes/register')
 const facebookAuthRouter = require('./Routes/facebookAuth')
@@ -38,4 +40,10 @@ app.use(updateRouter.routes())
 app.use(tokensRouters.routes())
 app.use(securityRouter.routes())
 
-app.listen(port, () => console.log(`The server is listening on port ${port}`))
+const credentials = {
+    key: fs.readFileSync('./key.pem'),
+    cert: fs.readFileSync('./cert.pem'),
+    passphrase: 'covsecret'
+}
+
+https.createServer(credentials, app.callback()).listen(port)
