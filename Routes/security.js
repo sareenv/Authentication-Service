@@ -15,17 +15,22 @@ router.get('/requestTwoFactorAuth', twoFactorAuth, ctx => {
 })
 
 
-router.post('/verifyTwoFactorAuth', twoFactorAuth ,(ctx)=> {
-	ctx.body = {message: 'Client is now verified'}
+router.post('/verifyTwoFactorAuth', bodyParser(), async cnx => {
+    const {email, token} =  cnx.request.body
+    const user = await User.findByEmail(email)
+	const result = await user.verifyTwoAuthentication(token)
+	console.log('The result is ' + result)
+	cnx.body = {message: 'Client is now verified'}
 })
 
 router.post('/signoutAllDevices', bodyParser(), verifyToken, async ctx => {
 	try{
 		const userId = ctx.request.userId
-		const result = await currentUser.logoutAllAccounts(userId)
+		const result = await User.logoutAllAccounts(userId)
 		console.log(result)
-		ctx.body = 'Logged your account'
+		ctx.body = {message: 'Logged out your from all devices'}
 	} catch(error) {
+		console.log(error.message)
 		ctx.throw(400, 'Error while logout user')
 	}
 	

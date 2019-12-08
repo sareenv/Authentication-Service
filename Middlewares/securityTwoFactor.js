@@ -33,8 +33,4 @@ const twoFactorAuth = async function(cnx, next) {
 }
 
 
-const verifyTwoFactorToken = async function(cnx, next) {
-
-}
-
 module.exports = twoFactorAuth

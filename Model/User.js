@@ -223,15 +223,15 @@ Userschema.methods.twoFactorpasswordVerificationEmail = async function() {
 /**
  * Logout the client from multiple devices.
  * @throws {Error} - User details are not present in the system or empty fields are sent.
- * @returns {String} - sends the json web token when the user is found in our system with two factor auth settings.
+ * @returns {Boolean} - user was logout then it will return true otherwise will return false
  */
 
 
-Userschema.methods.logoutAllAccounts = async function(userId) {
+Userschema.statics.logoutAllAccounts = async function(userId) {
 	try{
 		await connect()
 		const currentUser = await User.findById(userId)
-		await this.updateOne({$set: {tokens: []}})
+		await currentUser.updateOne({$set: {tokens: []}})
 		await disconnect()
 		return true
 	}catch(error) {
@@ -241,22 +241,16 @@ Userschema.methods.logoutAllAccounts = async function(userId) {
 
 
 
-/**
- * Verify the token sent to client for two factor authentication.
- * @throws {Error} - User details are not present in the system or empty fields are sent.
- * @returns {String} - sends the json web token when the user is found in our system with two factor auth settings.
- */
-
-
 Userschema.methods.verifyTwoAuthentication = async function(token) {
+	
 	const twoFactorVerificationSecret = this.usertwoFactorSecretToken
 	const verification = Speakeasy.totp.verify({
 		secret: twoFactorVerificationSecret,
 		encoding: 'base32',
 		token: token
 	})
-	console.log(verification)
-	return false
+	console.log(`The verification result is ${verification}`)
+	return verification
 }
 
 const User = mongoose.model('User', Userschema)

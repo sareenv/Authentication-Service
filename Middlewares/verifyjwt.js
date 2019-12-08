@@ -22,7 +22,7 @@ const verifyToken = async function(cnx, next){
       const userTokens = user.tokens
       const tokenAvailable = (userTokens.indexOf(token) > -1) ? true : false
       if(tokenAvailable !== true) {
-        cnx.throw(401, 'The token verification is unsucessfull')
+        cnx.throw(401, 'This token is expired now.')
       }
       cnx.request.userId = user._id
       return next()
