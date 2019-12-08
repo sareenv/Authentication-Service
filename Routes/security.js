@@ -3,6 +3,7 @@
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 const User = require('../Model/User')
+const {connect, disconnect} = require('../connection')
 
 const twoFactorAuth = require('../Middlewares/securityTwoFactor')
 const verifyToken = require('../Middlewares/verifyjwt')
@@ -19,9 +20,10 @@ router.post('/verifyTwoFactorAuth', twoFactorAuth ,(ctx)=> {
 })
 
 router.post('/signoutAllDevices', bodyParser(), verifyToken, async ctx => {
-	const currentUser = ctx.request.userId
 	try{
-		await currentUser.logoutAllAccounts()
+		const userId = ctx.request.userId
+		const result = await currentUser.logoutAllAccounts(userId)
+		console.log(result)
 		ctx.body = 'Logged your account'
 	} catch(error) {
 		ctx.throw(400, 'Error while logout user')

@@ -227,9 +227,12 @@ Userschema.methods.twoFactorpasswordVerificationEmail = async function() {
  */
 
 
-Userschema.methods.logoutAllAccounts = async function() {
+Userschema.methods.logoutAllAccounts = async function(userId) {
 	try{
+		await connect()
+		const currentUser = await User.findById(userId)
 		await this.updateOne({$set: {tokens: []}})
+		await disconnect()
 		return true
 	}catch(error) {
 		throw new Error(error.message)
