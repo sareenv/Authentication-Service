@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const Speakeasy = require('speakeasy')
 const mailUtility = require('../utils/mailer')
 
 const {connect, disconnect} = require('../connection')
@@ -79,7 +80,13 @@ const Userschema = mongoose.Schema({
 
 	tokens: {
 		type: [String]
+	}, 
+
+	usertwoFactorSecretToken: {
+		type: String, 
+		default: ''
 	}
+
 })
 
 /*
@@ -196,32 +203,40 @@ Userschema.methods.generateJwt = async function() {
 
 Userschema.methods.twoFactorpasswordVerificationEmail = async function() {
 	if(this.twoFactorAuth === true) {
-		const randomNumber = Math.floor(Math.random() * 900000)
-		/* 
-			save this radom number in form of token which expires in 
-			some times - may be in 3 mins or so and store it in the array.
-			- after 3 mins the code will be earsed from the system. 
-				- why becuase I need to store this information
-				- even if it's there no problem - there is - it consumes memory.
-
-			- middleware which checks removes it if it is not valid. - good idea.
-		*/
-		const message = `${randomNumber} is two factor verification password this 
-			radom code will be expired from system for security reasons.
-		`
-		const twoFactortokenSecret = 'bf91c77e9c8901104094c9bc56435cb1f0a451416e7ca8891a5225b3a962db55be1daf9a8fe0956b1e559c373708d72daf53d5a82f396caf55c833d871e4a67c';
-		const twoFactortoken = await jwt.sign({message}, twoFactortokenSecret)
-		this.twoFactorToken = twoFactortoken
-		try {
-			const result = await mailUtility(this.email, message)
-			return true
-		}catch(error){
-			throw new Error(error.message)
-		}
+		await connect()
+		const secret1= Speakeasy.generateSecret( {length: 21} )
+		await this.updateOne({$set: {usertwoFactorSecretToken: secret1.base32}})
+		await disconnect()
+		this.updateOne({})
+		const token = Speakeasy.totp({
+			secret: secret1.base32,
+			encoding: 'base32'
+		});
+		const message = `The Two factor authentication password for your account is ${token}`
+		const twoFactorEmail = await mailUtility(this.email, message)
+		return twoFactorEmail
 	}
 	return false
 }
 
+
+/**
+ * Verify the token sent to client for two factor authentication.
+ * @throws {Error} - User details are not present in the system or empty fields are sent.
+ * @returns {String} - sends the json web token when the user is found in our system with two factor auth settings.
+ */
+
+
+Userschema.methods.verifyTwoAuthentication = async function(token, secret) {
+	const twoFactorVerificationSecret = this.usertwoFactorSecretToken
+	const verification = Speakeasy.totp.verify({
+		secret: twoFactorVerificationSecret,
+		encoding: 'base32',
+		token: token
+	})
+	console.log(verification)
+	return false
+}
 
 const User = mongoose.model('User', Userschema)
 module.exports = User

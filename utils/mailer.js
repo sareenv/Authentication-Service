@@ -10,7 +10,7 @@ const sendEmail = async (email, content, subject="KV Backend Notification") => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'buggyman026@gmail.com', // needs to be replaced 
+            user: 'buggyman026@gmail.com',
             pass: 'Kinuorange@123'
         }
     })
