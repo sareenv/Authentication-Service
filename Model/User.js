@@ -206,16 +206,16 @@ Userschema.statics.updateDetails = async function(id, firstName, lastName, email
  */
 
 Userschema.statics.register = async function(details) {
-	
-	const {email, password, username, firstName} = details
-	const missingChecks = missingChecks(email, password, username, firstName)
+	const {email, password, username, firstName, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2} = details
+	const questionMissing = checkMissingValues(securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2)
+	const missingChecks = checkMissingValues(email, password, username, firstName)
 	const errormessage = 'User registeration was unsuccessfull without mandatory fields'
-	if(missingChecks === true) throw new Error(errormessage)
+	if(missingChecks === true || questionMissing === true) throw new Error(errormessage)
 	try{
 		await connect()
 		const existingUser = await User.findOne({email})
 		if(existingUser !== null) throw new Error('User with this email already exist in our system')
-		const newUser = new this({email, password, username, firstName})
+		const newUser = new this({email, password, username, firstName, securityQuestion1, securityAnswer1})
 		await newUser.save()
 		await disconnect()
 		return {status: true, message: 'Registered user into our system successfully.'}
