@@ -18,6 +18,16 @@ router.post('/register', bodyParser(), checkCaptcha ,async(cnx) => {
 	}
 })
 
+router.get('/registeredUsers', bodyParser(), checkCaptcha ,async(cnx) => {
+	try{
+		const users = await User.find({})
+		cnx.body = {registeredUsers: users}
+	}catch(error){
+		cnx.throw(400, error.message)
+	}
+})
+
+
 
 
 module.exports = router
