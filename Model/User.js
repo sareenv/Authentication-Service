@@ -210,8 +210,9 @@ Userschema.statics.resetPassword = async function(securityAnswer1, securityAnswe
 	try{
 		await connect()
 		const user = await User.findOne({_id: id})
-		if(user == null) throw new Error('Cannot find user with this details in our system') 
-		if(securityAnswer1 !== user.securityAnswer1 || securityAnswer2)
+		if(user == null) throw new Error('Cannot find user with this details in our system')
+		const mismatchChecks =  securityAnswer1 !== user.securityAnswer1 || securityAnswer2 !== user.securityAnswer2
+		if(mismatchChecks === true) throw new Error('security answers are not matched')
 		await disconnect()
 		return true
 	}catch(error){

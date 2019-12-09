@@ -16,7 +16,7 @@ router.put('/updateDetails/:id', async cnx => {
 })
 
 
-router.put('/changePassword/:id', async cnx => {
+router.put('/resetPassword/:id', async cnx => {
     try {
         const {newpassword, securityanswer1, securityanswer2} = cnx.request.query
         const currentUser = await User.findById(id)
