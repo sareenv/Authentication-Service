@@ -181,14 +181,12 @@ function checkMissingValues(...values) {
  *  @returns {Boolean} - returns true if the token is found in the system
  */
 
-Userschema.statics.updateDetails = async function(id, firstName, lastName, email, about){
-	if (checkMissingValues(id, firstname, lastname, email) === true) throw new Error('Details cannot be undefined')
+Userschema.methods.updateDetails = async function(id, firstName, lastName, email, about){
+	if (checkMissingValues(id, firstName, lastName, email) === true) throw new Error('Details cannot be undefined')
 	if(validator.isEmail(email) === false) throw new Error('New email address is not valid')
 	try{
 		await connect()
-		const user = await User.findOne({_id: id})
-		if(user == null) throw new Error('Cannot find user with this details in our system') 
-		await user.updateOne({$set: {firstName, lastName, email, about}})
+		await this.updateOne({$set: {firstName, lastName, email, about}})
 		await disconnect()
 		return true
 	}catch(error){
@@ -205,17 +203,16 @@ Userschema.statics.updateDetails = async function(id, firstName, lastName, email
  *  @returns {Boolean} - returns true if the token is found in the system
  */
 
-Userschema.statics.resetPassword = async function(securityAnswer1, securityAnswer2, id, password) {
-	if(validator.isEmail(email) === false) throw new Error('New email address is not valid')
+Userschema.methods.resetPassword = async function(securityAnswer1, securityAnswer2, password) {
 	try{
 		await connect()
-		const user = await User.findOne({_id: id})
-		if(user == null) throw new Error('Cannot find user with this details in our system')
-		const mismatchChecks =  securityAnswer1 !== user.securityAnswer1 || securityAnswer2 !== user.securityAnswer2
+		if(this == null) throw new Error('Cannot find user with this details in our system')
+		const mismatchChecks =  securityAnswer1 !== this.securityAnswer1 || securityAnswer2 !== this.securityAnswer2
 		if(mismatchChecks === true) throw new Error('security answers are not matched')
 		const hasedPassword = await bcrypt.hash(password, 10)
-		await user.updateOne({$set: {hasedPassword}})
+		await this.updateOne({$set: {hasedPassword}})
 		await disconnect()
+		await mailUtility(this.email, 'Your password has been changed now. Thanks for using our service')
 		return true
 	}catch(error){
 		throw new Error(`Error performing this operation`)
@@ -242,11 +239,11 @@ Userschema.statics.register = async function(details) {
 		await connect()
 		const existingUser = await User.findOne({email})
 		if(existingUser !== null) throw new Error('User with this email already exist in our system')
-		const newUser = new this({email, password, username, firstName, securityQuestion1, securityAnswer1})
+		const newUser = new this({email, password, username, firstName, securityQuestion1, securityAnswer1, securityQuestion2, securityAnswer2})
 		await newUser.save()
 		await disconnect()
 		return {status: true, message: 'Registered user into our system successfully.'}
-	}catch(error){
+	}catch(error) {
 		return {status: false, message: 'Error saving the user', error: error}
 	}
 }
