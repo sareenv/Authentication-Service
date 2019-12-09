@@ -42,7 +42,8 @@ const Userschema = mongoose.Schema({
 	},
 
 	about: {
-		type: String
+		type: String,
+		default: ''
 	},
 
 	twoFactorAuth: {
@@ -60,7 +61,7 @@ const Userschema = mongoose.Schema({
 	},
 
 	dateRegistered: {
-		type: Date,
+		type: Date
 	},
 
 	Active: {
@@ -80,6 +81,22 @@ const Userschema = mongoose.Schema({
 	usertwoFactorSecretToken: {
 		type: String, 
 		default: ''
+	},
+
+	securityQuestion1: {
+		type: String
+	}, 
+
+	securityAnswer1: {
+		type: String
+	}, 
+
+	securityQuestion2: {
+		type: String
+	}, 
+
+	securityAnswer2: {
+		type: String
 	}
 
 })
@@ -140,6 +157,45 @@ Userschema.statics.checkTokenExists = async function(token, _id){
 	} 
 }
 
+/**
+ *  The function makes use of the rest parameter and iterate to check
+ * 	if there are any undefined or missing values. Any number of args can be passed.
+ *  @params {Int, String, String, String, String}
+ * 	@throws {Error} - If the user is not present in the system with email
+ *  @returns {Boolean} - returns true if the token is found in the system
+ */
+
+function checkMissingValues(...values) {
+	for(let i = 0; i < values.length; i++){
+		if(values[i] === undefined || values[i].length <= 0) return true
+	}
+	return false
+}
+
+
+
+/**
+ *  Updates the user details such as email, first name, last name and other fields.
+ *  @params {Int, String, String, String, String}
+ * 	@throws {Error} - If the user is not present in the system with email
+ *  @returns {Boolean} - returns true if the token is found in the system
+ */
+
+Userschema.statics.updateDetails = async function(id, firstName, lastName, email, about){
+	if (checkMissingValues(id, firstname, lastname, email) === true) throw new Error('Details cannot be undefined')
+	if(validator.isEmail(email) === false) throw new Error('New email address is not valid')
+	try{
+		await connect()
+		const user = await User.findOne({_id})
+		if(user == null) throw new Error('Cannot find user with this details in our system') 
+		await user.updateOne({$set: {firstName, lastName, email, about}})
+		await disconnect()
+		return true
+	}catch(error){
+		throw new Error(`Error performing this operation`)
+	} 
+}
+
 
 
 /**
@@ -152,9 +208,9 @@ Userschema.statics.checkTokenExists = async function(token, _id){
 Userschema.statics.register = async function(details) {
 	
 	const {email, password, username, firstName} = details
-	if(email === undefined || username === undefined || password === undefined || firstName === undefined) {
-		throw new Error('User registeration was unsuccessfull without mandatory fields')
-	}
+	const missingChecks = missingChecks(email, password, username, firstName)
+	const errormessage = 'User registeration was unsuccessfull without mandatory fields'
+	if(missingChecks === true) throw new Error(errormessage)
 	try{
 		await connect()
 		const existingUser = await User.findOne({email})
@@ -198,18 +254,22 @@ Userschema.methods.generateJwt = async function() {
 
 Userschema.methods.twoFactorpasswordVerificationEmail = async function() {
 	if(this.twoFactorAuth === true) {
-		await connect()
-		const secret1= Speakeasy.generateSecret( {length: 21} )
-		await this.updateOne({$set: {usertwoFactorSecretToken: secret1.base32}})
-		await disconnect()
-		this.updateOne({})
-		const token = Speakeasy.totp({
-			secret: secret1.base32,
-			encoding: 'base32'
-		});
-		const message = `The Two factor authentication password for your account is ${token}`
-		const twoFactorEmail = await mailUtility(this.email, message)
-		return twoFactorEmail
+		try{
+			await connect()
+			const secret1= Speakeasy.generateSecret( {length: 21} )
+			await this.updateOne({$set: {usertwoFactorSecretToken: secret1.base32}})
+			await disconnect()
+			this.updateOne({})
+			const token = Speakeasy.totp({
+				secret: secret1.base32,
+				encoding: 'base32'
+			});
+			const message = `The Two factor authentication password for your account is ${token}`
+			const twoFactorEmail = await mailUtility(this.email, message)
+			return twoFactorEmail
+		} catch (error) {
+			throw new Error(error.message)
+		}
 	}
 	return false
 }

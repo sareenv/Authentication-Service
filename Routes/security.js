@@ -14,7 +14,6 @@ router.get('/requestTwoFactorAuth', twoFactorAuth, ctx => {
 	ctx.body = {message: 'Email has been sent to the client'}
 })
 
-
 router.post('/verifyTwoFactorAuth', bodyParser(), async cnx => {
     const {email, token} =  cnx.request.body
     const user = await User.findByEmail(email)
