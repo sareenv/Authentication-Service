@@ -24,7 +24,7 @@ const router = new Router()
 const port = process.env.PORT || 5050
 
 router.get('/', async(ctx)=>{
-    ctx.body = 'Welcome to the koa-server'
+    ctx.body = 'Welcome to the KVAUTH koa-server'
 })
 
 
