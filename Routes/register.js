@@ -3,6 +3,7 @@
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 const User = require('../Model/User')
+const {connect, disconnect} = require('../connection')
 const checkCaptcha = require('../Middlewares/recaptcha')
 
 const router = new Router()
@@ -18,9 +19,11 @@ router.post('/register', bodyParser(), checkCaptcha ,async(cnx) => {
 	}
 })
 
-router.get('/registeredUsers', bodyParser() ,async(cnx) => {
+router.get('/registeredUsers', async(cnx) => {
 	try{
+		await connect()
 		const users = await User.find({})
+		await disconnect()
 		cnx.body = {registeredUsers: users}
 	}catch(error){
 		cnx.throw(400, error.message)
