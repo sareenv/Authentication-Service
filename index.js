@@ -26,8 +26,12 @@ const port = process.env.PORT || 5050
 router.get('/', async(ctx)=>{
     ctx.body = 'Welcome to the KVAUTH koa-server'
 })
-
-
+app.use(function(cnx, next) {
+  cnx.header("Access-Control-Allow-Origin", '*');
+  cnx.header("Access-Control-Allow-Credentials", true);
+  cnx.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  next();
+});
 
 app.use(cors())
 app.use(passport.initialize())
