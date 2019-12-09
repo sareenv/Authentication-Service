@@ -20,14 +20,13 @@ const twoFactorAuth = async function(cnx, next) {
         const user = await User.findById(userId)
         const userTokens = user.tokens
         const tokenAvailable = (userTokens.indexOf(token) > -1) ? true : false
-        if(tokenAvailable !== true) cnx.throw(401, 'The token verification is unsucessfull')
+        if(tokenAvailable !== true) cnx.throw(401, 'User removed this token')
+        await user.updateOne({$set: {twoFactorAuth: true}})
         await disconnect()
-        if(user.twoFactorAuth === true) {
-            await user.twoFactorpasswordVerificationEmail()
-            return next()
-        }
-        cnx.throw(401, 'Wrong Token!')
+        await user.twoFactorpasswordVerificationEmail()
+        return next()
     }catch(error){
+        console.log(error.message)
         cnx.throw(401, 'The token verification is unsucessfull')
     }
 }
