@@ -119,7 +119,7 @@ Userschema.pre('save', async function() {
 /**
  *  Find the user by it's email.
  *  @params {String} - user email
- * 	@throws {Error} - If the user is not present in the system with email
+ * 	
  *  @returns {Object} - returns the object with the user details
  */
 
@@ -140,7 +140,7 @@ Userschema.statics.findByEmail = async function(email){
 /**
  *  checks the user token in stored tokens.
  *  @params {Int} user email
- * 	@throws {Error} - If the user is not present in the system with email
+ * 	
  *  @returns {Boolean} - returns true if the token is found in the system
  */
 
@@ -161,7 +161,7 @@ Userschema.statics.checkTokenExists = async function(token, _id){
  *  The function makes use of the rest parameter and iterate to check
  * 	if there are any undefined or missing values. Any number of args can be passed.
  *  @params {Int, String, String, String, String}
- * 	@throws {Error} - If the user is not present in the system with email
+ * 	
  *  @returns {Boolean} - returns true if the token is found in the system
  */
 
@@ -177,7 +177,7 @@ function checkMissingValues(...values) {
 /**
  *  Updates the user details such as email, first name, last name and other fields.
  *  @params {Int, String, String, String, String}
- * 	@throws {Error} - If the user is not present in the system with email
+ * 	
  *  @returns {Boolean} - returns true if the token is found in the system
  */
 
@@ -186,7 +186,7 @@ Userschema.statics.updateDetails = async function(id, firstName, lastName, email
 	if(validator.isEmail(email) === false) throw new Error('New email address is not valid')
 	try{
 		await connect()
-		const user = await User.findOne({_id})
+		const user = await User.findOne({_id: id})
 		if(user == null) throw new Error('Cannot find user with this details in our system') 
 		await user.updateOne({$set: {firstName, lastName, email, about}})
 		await disconnect()
@@ -195,6 +195,30 @@ Userschema.statics.updateDetails = async function(id, firstName, lastName, email
 		throw new Error(`Error performing this operation`)
 	} 
 }
+
+
+
+/**
+ *  Reset the user account password based on the security questions.
+ *  @params { String, String, String} - securityAnswer1, securityAnswer2, id
+ * 	
+ *  @returns {Boolean} - returns true if the token is found in the system
+ */
+
+Userschema.statics.resetPassword = async function(securityAnswer1, securityAnswer2, id) {
+	if(validator.isEmail(email) === false) throw new Error('New email address is not valid')
+	try{
+		await connect()
+		const user = await User.findOne({_id: id})
+		if(user == null) throw new Error('Cannot find user with this details in our system') 
+		if(securityAnswer1 !== user.securityAnswer1 || securityAnswer2)
+		await disconnect()
+		return true
+	}catch(error){
+		throw new Error(`Error performing this operation`)
+	} 
+}
+
 
 
 
