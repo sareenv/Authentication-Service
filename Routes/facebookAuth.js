@@ -11,7 +11,7 @@ const verifyToken = require('../Middlewares/verifyjwt')
 const facebookConfig = {
     clientID: '1178892432307006',
 	clientSecret: 'df0faa7791b2f07ac72f730d7afb9225', 
-	callbackURL: 'http://localhost:5050/auth/facebook/callback', // need to replace this with react url
+	callbackURL: 'https://kv304cem.herokuapp.com/auth/facebook/callback', 
     profileFields: ['email', 'id', 'displayName', 'photos', 'birthday', 'name'], 
 }
 
