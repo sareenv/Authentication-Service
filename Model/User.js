@@ -205,7 +205,7 @@ Userschema.statics.updateDetails = async function(id, firstName, lastName, email
  *  @returns {Boolean} - returns true if the token is found in the system
  */
 
-Userschema.statics.resetPassword = async function(securityAnswer1, securityAnswer2, id) {
+Userschema.statics.resetPassword = async function(securityAnswer1, securityAnswer2, id, password) {
 	if(validator.isEmail(email) === false) throw new Error('New email address is not valid')
 	try{
 		await connect()
@@ -213,6 +213,8 @@ Userschema.statics.resetPassword = async function(securityAnswer1, securityAnswe
 		if(user == null) throw new Error('Cannot find user with this details in our system')
 		const mismatchChecks =  securityAnswer1 !== user.securityAnswer1 || securityAnswer2 !== user.securityAnswer2
 		if(mismatchChecks === true) throw new Error('security answers are not matched')
+		const hasedPassword = await bcrypt.hash(password, 10)
+		await user.updateOne({$set: {hasedPassword}})
 		await disconnect()
 		return true
 	}catch(error){
