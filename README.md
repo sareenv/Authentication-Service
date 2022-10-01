@@ -8,7 +8,7 @@ Koa framework has been used to create the server and is backed by the MongoDB fo
 <li> Account Login with comparing the credentials with the passwords stored in hased format. </li>
 <li> Implemented option to OAuth authenticate using Facebook accounts. </li>
 <li> Support for two factor authentication by sending the email message to the registered email. </li>
-<li> Support for the recaptcha </li>
+<li> Support for the recaptcha for verify the human interaction </li>
 <li> Functionality to maintain the detailed access log of the account login history. </li>
 <li> View the logged details such as IP Address, browser detials, OS and device type of the clients. </li>
 <li> Allows the users to modify the details </li>
