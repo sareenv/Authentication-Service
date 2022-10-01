@@ -1,6 +1,6 @@
 # Authentication Service
 
-The Authentication APi system, the system is written in Node.js and follows the standard file structure to maintain the code. 
+RESTful APi system, and developed using Node.js and follows the standard file structure to maintain the code. 
 Koa framework has been used to create the server and is backed by the MongoDB for which the schema has been modelled using the Mongoose library.
 
 ## Functionality
