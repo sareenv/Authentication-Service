@@ -12,8 +12,13 @@ const connect = async() => {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	}
-	const dbUrl = 'mongodb://304cem:304cem123123@ds329668.mlab.com:29668/kv304cem'
-	return mongoose.connect(dbUrl, config)
+	
+	try {
+		return mongoose.connect('mongodb://mongoDB:27017/', config)
+	} catch (exception)  {
+		console.log(`Exception happend with code ${exception}`)
+		return undefined
+	}
 }
 
 const disconnect = async() => mongoose.connection.close()

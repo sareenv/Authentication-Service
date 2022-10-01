@@ -10,16 +10,20 @@ const router = new Router();
 
 router.post('/addUser:email'), async(cnx)=>{
     const email = cnx.params.email
-    await connect()
+    try {
+        await connect()
+        const getInfo = await User.findOne({email})
+        if (getInfo !== null){
+            await getInfo.add()
+        }else{
+            cnx.throw(400, 'Unfortunatley the users login information cannot be found in the system')
+        }     
+        await disconnect()
+    } catch(exception) {
+        cnx.throw(400, 'Exception has occured')
+    }
 
-    const getInfo = await User.findOne({email})
-    if (getInfo !== null){
-        console.log('Users login information can be processed!')
-        await getInfo.add()
-    }else{
-        cnx.throw(400, 'Unfortunatley the users login information cannot be found in the system')
-    }     
-    await disconnect()
+    
 }
 
 module.exports = router

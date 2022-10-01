@@ -10,16 +10,22 @@ const router = new Router()
 router.post('/login', bodyParser() ,async(cnx)=>{
     let password = cnx.request.body.password
     let email = cnx.request.body.email
-    await connect()
-    const ufind = await User.findOne({email})
-    if (ufind === null){
-        return cnx.body = "User's email is not found!"
+    try {
+        await connect()
+        const ufind = await User.findOne({email})
+        if (ufind === null){
+            return cnx.body = "User's email is not found!"
+        }
+        const passValid = await bcrypt.compare(password, ufind.password)
+        if (passValid === true){
+            return cnx.body = "Password has been validated!"
+        } else {
+            return cnx.body = "Password has not been verified!"
+        }
+    } catch(exception) {
+        return cnx.body = {exception: `Exception ${exception}`}
     }
-    const passValid = await bcrypt.compare(password, ufind.password)
-    if (passValid === true){
-        return cnx.body = "Password has been validated!"
-    } else
-        return cnx.body = "Password has not been verified!"
+    
 })
 
 // returns the registered user's for now

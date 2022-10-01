@@ -2,6 +2,7 @@
 
 const nodemailer = require('nodemailer')
 const validator = require('validator')
+require('dotenv').config('../')
 
 const sendEmail = async (email, content, subject="KV Backend Notification") => {
     if(email === undefined || email.length <= 0) throw new Error('email cannot be empty')
@@ -10,20 +11,20 @@ const sendEmail = async (email, content, subject="KV Backend Notification") => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'xyz@gmail.com',
-            pass: '_______'
+            user: process.env.email,
+            pass: process.env.password
         }
     })
 
     const mailOptions = {
-        from: 'buggyman026@gmail.com',
+        from: process.env.email,
         to: email,
         subject: subject,
-    html: `<h2> KVAuth System</h2> <p> ${content}  </p>`
+    html: `<h2> Authentication System</h2> <p> ${content}  </p>`
     };
 
     try{
-        const mailSent  = await transporter.sendMail(mailOptions)
+        await transporter.sendMail(mailOptions)
         return true
     }catch (error) {
         return false

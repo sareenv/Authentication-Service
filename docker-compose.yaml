@@ -1,0 +1,18 @@
+version: '2.0'
+services:
+  api:
+    build: .
+    ports:
+      - 5050:5050
+    environment:
+      - DB_URL="mongodb://mongoDB:27017/"
+    links:
+      - mongoDB
+    depends_on:
+      - mongoDB
+
+  mongoDB:
+    image: mongo
+    ports:
+      - 27017:27017
+  

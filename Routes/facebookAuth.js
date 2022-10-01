@@ -3,10 +3,8 @@ const passport = require('koa-passport')
 const FacebookStrategy = require('passport-facebook').Strategy
 const router = new Router();
 const User = require('../Model/User')
-const bodyParser = require('koa-bodyparser')
 const {connect, disconnect} = require('../connection')
-
-const verifyToken = require('../Middlewares/verifyjwt')
+require('dotenv').config('../')
 
 const facebookConfig = {
     clientID: '1178892432307006',
@@ -33,14 +31,14 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', async (e
     const newUser = new User({
         username: firstName,
         email: email, 
-        password: '123123',
+        password: 'NA',
         profileImageUrl: profileImageUrl,
         firstName: firstName,
         lastName: lastName
     })
     
     await connect()
-    const result = await newUser.save()
+    await newUser.save()
     return await disconnect()
 }))
 
